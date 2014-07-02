@@ -1,7 +1,7 @@
 Spatial Aggregation
 =========
 
-This is a web app that will aggregate point data into a tessellation of hexagons or fishnet. The app is built with ArcGIS API for JavaScript and work with web map hosted in ArcGIS Online.  
+This is a web app that will aggregate point data into a tessellation of hexagons or fishnet. The app is built with ArcGIS API for JavaScript and work with web map hosted in ArcGIS Online. It also uses a JavaScript lib from [here] (https://github.com/brian3kb/graham_scan_js). 
 
 ## Features
 * Create hexagon tessellation of the extent of given point feature layer or user defined area of interst (AOI).
