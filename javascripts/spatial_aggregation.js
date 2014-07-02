@@ -307,6 +307,8 @@ require([
                 }
 
                 tessellationLayer.clear();
+                map.infoWindow.hide();
+
                 if(tessellationInfo.hexagonOrientation === "NS") {
                     createHexagons1(polygon, tessellationLayer, radius);
                 }else if (tessellationInfo.hexagonOrientation === "EW") {
@@ -344,6 +346,8 @@ require([
                 }
 
                 tessellationLayer.clear();
+                map.infoWindow.hide();
+
                 createFishnet(polygon, tessellationLayer, gridSize);
                 tessellationInfo.type = "fishnet";
 
@@ -527,6 +531,7 @@ require([
         if(tessellationLayer) {
             tessellationLayer.clear();
         }
+        map.infoWindow.hide();
         registry.byId("createHexagons").setAttribute('disabled', true);
         registry.byId("aggregateButton").setAttribute('disabled', true);
         registry.byId("createFishnet").setAttribute('disabled', true);
