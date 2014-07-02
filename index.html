@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--The viewport meta tag is used to improve the presentation and behavior of the samples
+  on iOS devices-->
+<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+<title></title>
+
+<link rel="stylesheet" href="http://js.arcgis.com/3.9/js/dojo/dijit/themes/claro/claro.css">
+<link rel="stylesheet" href="http://js.arcgis.com/3.9/js/esri/css/esri.css">
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.8.5/dojox/grid/resources/Grid.css" />
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.8.5/dojox/grid/resources/claroGrid.css" />
+
+<style>
+    html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+    #map{
+        padding:0;
+    }
+</style>
+
+<script src="http://js.arcgis.com/3.9/"></script>
+<script src="javascripts/convexhull.js"></script>
+
+<script src="javascripts/spatial_aggregation.js"></script>
+</head>
+
+<body class="claro">
+<div data-dojo-type="dijit/layout/BorderContainer"
+     data-dojo-props="design:'headline', gutters:false"
+     style="width:100%;height:100%;margin:0;">
+
+    <div id="map"
+         data-dojo-type="dijit/layout/ContentPane"
+         data-dojo-props="region:'center'"
+         style="padding:0;">
+
+        <div style="position:absolute; right:20px; top:10px; z-Index:999;">
+
+            <div data-dojo-type="dijit/TitlePane"
+                 data-dojo-props="title:'Spatial Aggregation', closable:false,  open:false">
+                <div data-dojo-type="dijit/layout/ContentPane" style="width:410px; height:490px; overflow:auto;">
+                    <div id="tessellation" >
+                        <div id="drawButtons">
+                            <span>Draw AOI with:<br /></span>
+                            <button id="Polygon" data-dojo-type="dijit/form/Button" type="button">Polygon</button>
+                            <button id="FreehandPolygon" data-dojo-type="dijit/form/Button" type="button">Freehand Polygon</button>
+                            <button id="convexHullPolygon" data-dojo-type="dijit/form/Button" type="button">Convex Hull</button>
+                            <button id="clearGraphicsButton" data-dojo-type="dijit/form/Button" type="button">Clear</button>
+                        </div>
+                        <div> <br />
+                            <span>Summarize point data for field:<br /></span>
+                            <input id="fieldSelect"> By
+                            <input id="summaryTypeSelect">
+                            <button id="addFieldButton" data-dojo-type="dijit/form/Button" type="button">Add</button>
+                            <button id="clearFieldsButton" data-dojo-type="dijit/form/Button" type="button">Clear</button>
+                            <div id="summaryGrid"></div>
+                        </div>
+                        <div> <br />
+                            <span>Create Tessellation with: </span></br>
+                            <label>Units: </label><input id="unitsSelect">
+                            </br><label>Hexagon Orientation: </label>
+                            <input type="radio" data-dojo-type="dijit/form/RadioButton" name="orientation" id="orientationRadioOne" checked value="NS"/> <label for="orientationRadioOne">Horizontal</label>
+                            <input type="radio" data-dojo-type="dijit/form/RadioButton" name="orientation" id="orientationRadioTwo" value="EW"/> <label for="orientationRadioTwo">Vertical</label> <br />
+                            <table><tr>
+                                <td>
+                                    <button id="createHexagons" data-dojo-type="dijit/form/Button" type="button">Hexagons</button>
+                                </td>
+                                <td>
+                                    <span>Radius: </span>
+                                </td>
+                                <td>
+                                    <div id="horizontalSlider" data-dojo-type="dijit/form/HorizontalSlider"
+                                         value="200" minimum="0" maximum="1000" discreteValues="1001"
+                                         intermediateChanges="true"
+                                         showButtons="true" style="width:150px;" name="horizontalSlider">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="hexagonRadius">(200 Meters)</div>
+                                </td>
+                            </tr>
+                                <tr>
+                                    <td>
+                                        <button id="createFishnet" data-dojo-type="dijit/form/Button" type="button">Fishnet</button>
+                                    </td>
+                                    <td>
+                                        <span>Size: </span>
+                                    </td>
+                                    <td>
+                                        <div id="horizontalSlider2" data-dojo-type="dijit/form/HorizontalSlider"
+                                             value="400" minimum="0" maximum="1000" discreteValues="1001"
+                                             intermediateChanges="true"
+                                             showButtons="true" style="width:150px;" name="horizontalSlider2">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div id="fishnetSize">(400 Meters)</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>  </br>
+                        <div>
+                            <label>Renderering with field: </label><input id="renderingFieldSelect"> </br>
+                            <input id="removeEmptyCheck" name="removeEmptyCheck" data-dojo-type="dijit/form/CheckBox" value="remove" /> <label for="removeEmptyCheck">Remove empty cells</label>
+                            <input id="removeBoundaryCheck" name="removeBoundaryCheck" data-dojo-type="dijit/form/CheckBox" value="remove" /> <label for="removeBoundaryCheck">Remove cell boundary</label> </br>
+                            <button id="aggregateButton" data-dojo-type="dijit/form/Button" type="button">Aggregate</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div data-dojo-type="dijit/TitlePane"
+                 data-dojo-props="title:'Legend - TOC', closable:false,  open:false">
+                <div data-dojo-type="dijit/layout/AccordionContainer">
+                    <div data-dojo-type="dijit/layout/ContentPane" id="legendPane" title="Legend"  selected="true">
+                        <div id="legendDiv"></div>
+                    </div>
+                    <div data-dojo-type="dijit/layout/ContentPane" title="TOC" >
+                        <span style="padding:10px 0;">Click to toggle the visibility of the layers</span>
+                        <div id="toggle" style="padding: 2px 2px;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</body>
+
+</html>
